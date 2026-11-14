@@ -1,0 +1,17 @@
+groups:
+  - name: cascade-simulator
+    rules:
+      - alert: CascadeSimulatorUnavailable
+        expr: up{job="cascade-simulator"} == 0
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Research simulator endpoint unavailable"
+      - alert: CascadeSimulatorHttpErrors
+        expr: rate(http_requests_total{status=~"5.."}[5m]) > 1
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Elevated demo HTTP error rate"

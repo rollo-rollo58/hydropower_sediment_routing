@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cascade-simulator
+  labels:
+    app: cascade-simulator
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: cascade-simulator
+  template:
+    metadata:
+      labels:
+        app: cascade-simulator
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 10001
+      containers:
+        - name: api
+          image: example.invalid/cascade-simulator:replace-with-version
+          ports:
+            - containerPort: 8000
+          readinessProbe:
+            httpGet:
+              path: /api/health
+              port: 8000
+          resources:
+            requests:
+              cpu: 100m
+              memory: 256Mi
+            limits:
+              cpu: '1'
+              memory: 1Gi
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: [ALL]
